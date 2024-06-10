@@ -15,3 +15,17 @@ Example 2:
 Input: nums = [5], k = 9
 Output: 0
 */
+class Solution {
+public:
+    int subarraysDivByK(vector<int>& nums, int k) {
+        int cnt=0,prefixmod=0,i;
+        vector<int> mod(k);
+        mod[0]=1;
+        for(i=0;i<nums.size();i++){
+            prefixmod=(prefixmod + nums[i]%k + k) % k;
+            cnt=cnt+mod[prefixmod];
+            mod[prefixmod]++;
+        }
+        return cnt;
+    }
+};
