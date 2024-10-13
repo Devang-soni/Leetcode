@@ -22,42 +22,35 @@ Output: [1,1]
 class Solution {
 public:
     vector<int> smallestRange(vector<vector<int>>& nums) {
-        int k = nums.size();
-        // Stores the current index of each list
-        vector<int> indices(k, 0);
-        // To track the smallest range
-        vector<int> range = {-1000000, 1000000};
+        // {value,{rowIndex, colIndex}}
+        priority_queue<pair<int,pair<int,int>>, vector<pair<int,pair<int,int>>>, greater<>> pq;
 
-        while (true) {
-            int curMin = INT_MAX, curMax = INT_MIN, minListIndex = 0;
+        int s=0, e=INT_MAX, maxi=INT_MIN, k=nums.size();
 
-            // Find the current minimum and maximum values across the lists
-            for (int i = 0; i < k; i++) {
-                int currentElement = nums[i][indices[i]];
-
-                // Update the current minimum
-                if (currentElement < curMin) {
-                    curMin = currentElement;
-                    minListIndex = i;
-                }
-
-                // Update the current maximum
-                if (currentElement > curMax) {
-                    curMax = currentElement;
-                }
-            }
-
-            // Update the range if a smaller one is found
-            if (curMax - curMin < range[1] - range[0]) {
-                range[0] = curMin;
-                range[1] = curMax;
-            }
-
-            // Move to the next element in the list that had the minimum value
-            if (++indices[minListIndex] == nums[minListIndex].size()) break;
+        for(int i=0; i<k; i++){
+            pq.push({nums[i][0], {i,0}});
+            maxi=max(maxi,nums[i][0]);
         }
 
-        return range;
+        while(1){
+            auto it=pq.top();
+            pq.pop();
+            int mini=it.first;
+            int r=it.second.first;
+            int c=it.second.second;
+
+            if(maxi-mini < e-s){
+                e=maxi;
+                s=mini;
+            }
+
+            if(c+1==nums[r].size()) break;
+
+            int next=nums[r][c+1];
+            pq.push({next,{r,c+1}});
+            maxi=max(maxi,next);
+        }
+
+        return {s,e};
     }
 };
-
